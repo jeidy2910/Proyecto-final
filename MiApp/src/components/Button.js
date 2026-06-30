@@ -2,12 +2,13 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
 
 /**
- * Botón reutilizable con diferentes variantes
+ * Componente Botón reutilizable
  * @param {string} title - Texto del botón
  * @param {function} onPress - Función al presionar
- * @param {string} variant - 'primary' | 'secondary' | 'danger'
- * @param {boolean} loading - Estado de carga
- * @param {boolean} disabled - Deshabilitado
+ * @param {string} variant - 'primary' | 'secondary' | 'danger' | 'outline'
+ * @param {boolean} loading - Muestra spinner de carga
+ * @param {boolean} disabled - Deshabilita el botón
+ * @param {object} style - Estilos adicionales
  */
 const Button = ({ 
   title, 
@@ -17,18 +18,21 @@ const Button = ({
   disabled = false,
   style 
 }) => {
+  // Determinar estilos según variante
   const getButtonStyle = () => {
-    if (disabled) return styles.disabledButton;
+    if (disabled || loading) return styles.disabledButton;
     switch (variant) {
       case 'secondary': return styles.secondaryButton;
       case 'danger': return styles.dangerButton;
+      case 'outline': return styles.outlineButton;
       default: return styles.primaryButton;
     }
   };
 
   const getTextStyle = () => {
-    if (disabled) return styles.disabledText;
+    if (disabled || loading) return styles.disabledText;
     switch (variant) {
+      case 'outline': return styles.outlineText;
       case 'secondary': return styles.secondaryText;
       default: return styles.primaryText;
     }
@@ -42,7 +46,7 @@ const Button = ({
       activeOpacity={0.7}
     >
       {loading ? (
-        <ActivityIndicator color="#FFFFFF" />
+        <ActivityIndicator color={variant === 'outline' ? '#007AFF' : '#FFFFFF'} />
       ) : (
         <Text style={[styles.text, getTextStyle()]}>{title}</Text>
       )}
@@ -58,7 +62,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     minWidth: 120,
+    minHeight: 50,
   },
+  // Variantes
   primaryButton: {
     backgroundColor: '#007AFF',
   },
@@ -68,9 +74,15 @@ const styles = StyleSheet.create({
   dangerButton: {
     backgroundColor: '#FF3B30',
   },
+  outlineButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#007AFF',
+  },
   disabledButton: {
     backgroundColor: '#CCCCCC',
   },
+  // Textos
   text: {
     fontSize: 16,
     fontWeight: '600',
@@ -80,6 +92,9 @@ const styles = StyleSheet.create({
   },
   secondaryText: {
     color: '#FFFFFF',
+  },
+  outlineText: {
+    color: '#007AFF',
   },
   disabledText: {
     color: '#888888',

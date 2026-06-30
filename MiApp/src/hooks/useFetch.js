@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 /**
- * Custom hook para hacer peticiones API
+ * Custom hook para hacer peticiones HTTP
  * @param {string} url - URL de la API
- * @param {object} options - Opciones de fetch (headers, method, etc.)
+ * @param {object} options - Opciones de fetch
  * @returns {object} { data, loading, error, refetch }
  */
 const useFetch = (url, options = {}) => {
@@ -11,7 +11,7 @@ const useFetch = (url, options = {}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -35,13 +35,20 @@ const useFetch = (url, options = {}) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [url, options]);
 
   useEffect(() => {
-    fetchData();
-  }, [url]);
+    if (url) {
+      fetchData();
+    }
+  }, [fetchData, url]);
 
-  return { data, loading, error, refetch: fetchData };
+  return { 
+    data, 
+    loading, 
+    error, 
+    refetch: fetchData 
+  };
 };
 
 export default useFetch;
